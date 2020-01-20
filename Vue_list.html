@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vue list</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <template id="myList">
+    <ul>
+	  <li v-for='item of res' :style="{color: item.Status=='NEW'? 'grey' : item.Status=='IN_PROGRESS'? 'blue':item.Status=='RESOLVED'? 'green':''}">{{item.Id}}-{{statuses[item.Status]}}</li>
+	</ul>
+  </template>
+  <div id="app">
+    <mylst></mylst>
+  </div>
+
+  <script>
+   
+    var app = new Vue({
+      el: '#app',
+	  components:{
+	    mylst: {
+		  data:()=>{
+		    return {
+		      res:[],
+			  statuses: {
+			    'NEW': 'Новый',
+			    'IN_PROGRESS': 'В работе',
+			    'RESOLVED': 'Решена'}
+			  }
+		  },
+		  
+          template: '#myList',
+		  mounted: async function() {
+          await axios
+                .get("http://10.0.201.1:3000")
+                .then(response => {
+                    this.res = response.data;
+					console.log(this.res)
+                })
+                .catch(function(e){
+                    this.error = e;
+                });
+          },
+	    }
+	  }
+	  
+    })
+	 
+	
+  </script>
+</body>
+</html>
